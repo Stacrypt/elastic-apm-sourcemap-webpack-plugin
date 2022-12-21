@@ -72,10 +72,7 @@ export default class ElasticAPMSourceMapPlugin implements WebpackPluginInstance 
         const formData = new FormData();
         const bundleFilePath = `${this.config.publicPath}/${sourceFile}`;
 
-        formData.append('sourcemap', compilation.assets[sourceMap].source(), {
-          filename: sourceMap,
-          contentType: 'application/json'
-        });
+        formData.append('sourcemap', compilation.assets[sourceMap].source());
         formData.append('service_version', this.config.serviceVersion);
         formData.append('bundle_filepath', bundleFilePath);
         formData.append('service_name', this.config.serviceName);
@@ -91,7 +88,7 @@ export default class ElasticAPMSourceMapPlugin implements WebpackPluginInstance 
         return fetch(this.config.serverURL, {
           method: 'POST',
           body: formData,
-          headers: headers
+          headers: { ...headers, 'kbn-xsrf': 'true' }
         })
           .then(response => Promise.all([response.ok, response.text()]))
           .then(([ok, responseText]) => {
