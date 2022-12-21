@@ -3,10 +3,12 @@ import fetch from 'node-fetch';
 import FormData from 'form-data';
 import webpack, { StatsChunk, WebpackPluginInstance } from 'webpack';
 import webpackLog, { Level, Logger } from 'webpack-log';
+
 interface Source {
   sourceFile?: string;
   sourceMap?: string;
 }
+
 type UploadTask = Promise<void>;
 
 export interface Config {
@@ -18,9 +20,11 @@ export interface Config {
   logLevel?: Level;
   ignoreErrors?: boolean;
 }
+
 export default class ElasticAPMSourceMapPlugin implements WebpackPluginInstance {
   config: Config;
   logger: Logger;
+
   constructor(config: Config) {
     this.config = Object.assign(
       {
@@ -101,7 +105,7 @@ export default class ElasticAPMSourceMapPlugin implements WebpackPluginInstance 
           });
       }),
       R.map((chunk) => {
-        const { files, auxiliaryFiles } = chunk
+        const { files, auxiliaryFiles } = chunk;
 
         const sourceFile = R.find(R.test(/\.js$/), files || []);
         // Webpack 4 uses `files` and does not have `auxiliaryFiles`. The following line
@@ -121,9 +125,9 @@ export default class ElasticAPMSourceMapPlugin implements WebpackPluginInstance 
       compiler.hooks.emit.tapAsync('ElasticAPMSourceMapPlugin', (compilation, callback) =>
         this.emit(compilation, callback)
       );
-    // We only run tests against Webpack 5 currently.
-    /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-    // @ts-expect-error
+      // We only run tests against Webpack 5 currently.
+      /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+      // @ts-expect-error
     } else if (compiler.plugin) {
       // Webpack 4
       /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
